@@ -59,8 +59,7 @@ function! s:ShowBases(string, count, ...) abort
   try
     let l:number = bases#ParseNumber(l:nrstring, l:base)
   catch /ERROR(\(BadValue\|NumberOverflow\))/
-    let l:errormsg = substitute(v:exception, 'ERROR(BadValue): ', '', '')
-    return maktaba#error#Shout(l:errormsg)
+    return maktaba#error#Shout(maktaba#error#Split(v:exception)[1])
   endtry
   echomsg printf('<%s>%s  %s,  Hex %s,  Octal %s,  Binary %s',
                \ l:nrstring,
