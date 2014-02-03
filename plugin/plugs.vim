@@ -58,7 +58,7 @@ function! s:ShowBases(string, count, ...) abort
   let l:nrstring = matchstr(l:string, '\x\+$')
   try
     let l:number = bases#ParseNumber(l:nrstring, l:base)
-  catch /ERROR(BadValue)/
+  catch /ERROR(\(BadValue\|NumberOverflow\))/
     let l:errormsg = substitute(v:exception, 'ERROR(BadValue): ', '', '')
     return maktaba#error#Shout(l:errormsg)
   endtry
