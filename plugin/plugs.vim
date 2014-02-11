@@ -3,7 +3,7 @@ if !s:enter
   finish
 endif
 
-call maktaba#library#Require('bases')
+call maktaba#library#Require('bases.vim')
 
 " Returns {string} zero-padded and partitioned into groups of width {width}.
 " When {always} is true, the zero-padding is always added, even for strings
