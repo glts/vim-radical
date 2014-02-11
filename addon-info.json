@@ -1,0 +1,10 @@
+{
+    "name": "radical.vim",
+    "description": "Show number under cursor in hex, octal, binary",
+    "author": "glts <676c7473@gmail.com>",
+    "version": "0.0.0-SNAPSHOT",
+    "dependencies": {
+        "maktaba": {},
+        "bases.vim": {}
+    }
+}
