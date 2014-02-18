@@ -10,7 +10,7 @@ hexadecimal, octal, and binary representation. Radical uses <cword> (or the
 Visual selection) to obtain the number in question and guesses the base.
 
 This plugin depends on the |Maktaba| library.
-This plugin requires an {installer} for the |bases| library to be available.
+This plugin requires an {installer} for the |magnum| library to be available.
 
 						*<Plug>RadicalView*
 Radical defines a <Plug> mapping <Plug>RadicalView, in normal and Visual mode.

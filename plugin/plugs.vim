@@ -3,7 +3,7 @@ if !s:enter
   finish
 endif
 
-call maktaba#library#Require('bases.vim')
+call maktaba#library#Require('magnum.vim')
 
 " Returns {string} zero-padded and partitioned into groups of width {width}.
 " When {always} is true, the zero-padding is always added, even for strings
@@ -57,17 +57,17 @@ function! s:ShowBases(string, count, ...) abort
   " so the following pattern is good enough.
   let l:nrstring = matchstr(l:string, '\x\+$')
   try
-    let l:number = bases#ParseNumber(l:nrstring, l:base)
-  catch /ERROR(\(BadValue\|NumberOverflow\))/
+    let l:int = magnum#Int(l:nrstring, l:base)
+  catch /ERROR(BadValue)/
     return maktaba#error#Shout(maktaba#error#Split(v:exception)[1])
   endtry
   echomsg printf('<%s>%s  %s,  Hex %s,  Octal %s,  Binary %s',
                \ l:nrstring,
                \ l:base is 10 ? '' : l:base,
-               \ l:number,
-               \ s:Format(bases#ToHexString(l:number), 4, 0),
-               \ s:Format(bases#ToOctalString(l:number), 3, 1),
-               \ s:Format(bases#ToBinaryString(l:number), 8, 1),
+               \ l:int.String(),
+               \ s:Format(l:int.String(16), 4, 0),
+               \ s:Format(l:int.String(8), 3, 1),
+               \ s:Format(l:int.String(2), 8, 1),
                \ )
 endfunction
 

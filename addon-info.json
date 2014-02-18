@@ -5,6 +5,6 @@
     "version": "0.0.0-SNAPSHOT",
     "dependencies": {
         "maktaba": {},
-        "bases.vim": {}
+        "magnum.vim": {}
     }
 }
