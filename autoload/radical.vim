@@ -18,7 +18,7 @@ let s:BASES = {
 
 function! s:CheckIsValidBase(number) abort
   if !maktaba#value#IsIn(a:number, [0, 2, 8, 10, 16])
-    call maktaba#error#Shout('Base %s is not supported', a:number)
+    call maktaba#error#Shout('Base %s not supported', a:number)
     return 0
   endif
   return 1
@@ -123,7 +123,8 @@ function! radical#NormalView(count) abort
   endif
   let l:hit = s:FindNumberStringWithinLine(a:count, 0)
   if empty(l:hit)
-    call maktaba#error#Warn('No number under cursor')
+    call maktaba#error#Warn('No number' .
+        \ (a:count is 0 ? '' : (' of base ' . a:count)) . ' under cursor')
     return
   endif
   let l:numberinfo = s:ParseNumber(l:hit.numberstring, a:count)
