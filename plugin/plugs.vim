@@ -3,5 +3,10 @@ if !s:enter
   finish
 endif
 
-nnoremap <unique> <Plug>RadicalView :<C-U>call radical#RadicalView(expand('<cword>'), v:count)<CR>
-xnoremap <unique> <Plug>RadicalView :<C-U>call radical#RadicalView('', v:count, visualmode())<CR>
+nnoremap <unique> <Plug>RadicalView :<C-U>call radical#NormalView(v:count)<CR>
+xnoremap <unique> <Plug>RadicalView :<C-U>call radical#VisualView(v:count, visualmode())<CR>
+
+nnoremap <unique> <Plug>RadicalCoerceToDecimal :<C-U>call radical#CoerceToBase(10, v:count)<CR>
+nnoremap <unique> <Plug>RadicalCoerceToHex :<C-U>call radical#CoerceToBase(16, v:count)<CR>
+nnoremap <unique> <Plug>RadicalCoerceToOctal :<C-U>call radical#CoerceToBase(8, v:count)<CR>
+nnoremap <unique> <Plug>RadicalCoerceToBinary :<C-U>call radical#CoerceToBase(2, v:count)<CR>

@@ -1,71 +1,159 @@
 call maktaba#library#Require('magnum.vim')
 
-" Returns {string} zero-padded and partitioned into groups of width {width}.
-" When {always} is true, the zero-padding is always added, even for strings
-" shorter than {width}. When it is false, no padding is added in that case.
-function! s:Format(string, width, always) abort
-  let l:len = len(a:string)
-  if a:always || l:len > a:width
-    let l:string = repeat('0', l:len%a:width is 0 ? 0 : a:width-l:len%a:width) . a:string
-    return join(split(l:string, '.\{' . a:width . '}\zs'), ' ')
-  else
-    return a:string
+let s:BASES = {
+    \ 0:  {'searchpattern': '0x\x\+\|0o\=\o\+\|0b[01]\+\|\d\+'},
+    \ 2:  {'searchpattern': '\%(0b\)\=[01]\+',
+    \      'prefixpattern': '^0b',
+    \      'format': '0b%s'},
+    \ 8:  {'searchpattern': '\%(0o\=\)\=\o\+',
+    \      'prefixpattern': '^0o\=',
+    \      'format': '0%s'},
+    \ 10: {'searchpattern': '\d\+',
+    \      'prefixpattern': '^',
+    \      'format': '%s'},
+    \ 16: {'searchpattern': '\%(0x\)\=\x\+',
+    \      'prefixpattern': '^0x',
+    \      'format': '0x%s'}
+    \ }
+
+function! s:CheckIsValidBase(number) abort
+  if !maktaba#value#IsIn(a:number, [0, 2, 8, 10, 16])
+    call maktaba#error#Shout('Base %s is not supported', a:number)
+    return 0
   endif
+  return 1
 endfunction
 
-" Shows the bases for a number {string} of base {count} (default 10). When the
-" optional argument is present it should be one of the Visual mode characters.
-function! s:ShowBases(string, count, visualmode) abort
-  if index([0, 2, 8, 10, 16], a:count) < 0
-    call maktaba#error#Shout("Base %s is not supported", a:count)
-    return
-  endif
+function! s:IntegerToString(integer, base, ...) abort
+  let l:format = a:0 ? s:BASES[a:base].format : '%s'
+  return printf(l:format, a:integer.String(a:base))
+endfunction
 
-  " Determine the query string to use and guess the base
-  if a:visualmode is ''
-    " Normal mode, this relies on <cword> but strip off _ and minus sign
-    let l:string = substitute(a:string, '_', '', 'g')
-    let l:string = substitute(l:string, '^-', '', '')
-  else
-    " Visual mode, use the selection as query string
-    let reg_save = @@
+function! s:NumberStringToInteger(numberstring, base) abort
+  let l:rawstring = substitute(a:numberstring, s:BASES[a:base].prefixpattern, '', '')
+  return magnum#Int(l:rawstring, a:base)
+endfunction
+
+function! s:GuessBase(numberstring) abort
+  if a:numberstring =~? '^0x\x\+$'
+    return 16
+  elseif a:numberstring =~? '^0o\=\o\+$'
+    return 8
+  elseif a:numberstring =~? '^0b[01]\+$'
+    return 2
+  elseif a:numberstring =~? '^\d\+$'
+    return 10
+  endif
+  throw maktaba#error#BadValue('Cannot guess base of string "%s"', a:numberstring)
+endfunction
+
+function! s:ParseNumber(numberstring, base) abort
+  try
+    let l:base = a:base is 0 ? s:GuessBase(a:numberstring) : a:base
+    let l:integer = s:NumberStringToInteger(a:numberstring, l:base)
+    return {'integer': l:integer, 'base': l:base}
+  catch /ERROR(BadValue)/
+    return {}
+  endtry
+endfunction
+
+function! s:FindNumberStringWithinLine(base_or_zero, rightwards) abort
+  let l:pattern = s:BASES[a:base_or_zero].searchpattern
+  let l:cursor_save = getpos('.')[1:2]
+  try
+    let l:end = searchpos(l:pattern, 'ce', line('.'))
+    if l:end == [0, 0]
+      return {}
+    endif
+    let l:start = searchpos(l:pattern, 'bc', line('.'))
+    if !a:rightwards && l:cursor_save[1] < l:start[1]
+      return {}
+    endif
+    let l:string = getline('.')[(l:start[1]-1):(l:end[1]-1)]
+    if l:string =~? l:pattern
+      return {'numberstring': l:string, 'startcol': l:start[1], 'endcol': l:end[1]}
+    endif
+    return {}
+  finally
+    call cursor(l:cursor_save[0], l:cursor_save[1])
+  endtry
+endfunction
+
+function! s:GetVisualSelection(visualmode) abort
+  let l:clipboard_save = &clipboard
+  try
+    set clipboard=
+    let l:reg_save = @@
     silent execute 'normal! `<' . a:visualmode . '`>y'
     let l:string = @@
-    let @@ = reg_save
-  endif
-  if a:count isnot 0
-    let l:base = a:count
-  elseif l:string =~? '^0x\x\+$'
-    let l:base = 16
-  elseif l:string =~? '^0o\=\o\+$'
-    let l:base = 8
-  elseif l:string =~? '^0\=b[01]\+$'
-    let l:base = 2
-  elseif l:string =~? '^\d\+$'
-    let l:base = 10
-  else
-    call maktaba#error#Shout("Not a valid number: %s", l:string)
-    return
-  endif
-
-  " Extract the actual query string: \x contains \d contains \o contains [01],
-  " so the following pattern is good enough.
-  let l:nrstring = matchstr(l:string, '\x\+$')
-  try
-    let l:int = magnum#Int(l:nrstring, l:base)
-  catch /ERROR(BadValue)/
-    return maktaba#error#Shout(maktaba#error#Split(v:exception)[1])
+    let @@ = l:reg_save
+    return l:string
+  finally
+    let &clipboard = l:clipboard_save
   endtry
+endfunction
+
+function! s:Format(string, width) abort
+  let l:jut = strlen(a:string) % a:width
+  let l:padded_string = repeat('0', l:jut is 0 ? 0 : (a:width - l:jut)) . a:string
+  return join(split(l:padded_string, '.\{' . a:width . '}\zs'))
+endfunction
+
+function! s:PrintBaseInfo(integer, base) abort
   echomsg printf('<%s>%s  %s,  Hex %s,  Octal %s,  Binary %s',
-               \ l:nrstring,
-               \ l:base is 10 ? '' : l:base,
-               \ l:int.String(),
-               \ s:Format(l:int.String(16), 4, 0),
-               \ s:Format(l:int.String(8), 3, 1),
-               \ s:Format(l:int.String(2), 8, 1),
+               \ s:IntegerToString(a:integer, a:base),
+               \ a:base is 10 ? '' : a:base,
+               \ s:IntegerToString(a:integer, 10),
+               \ s:Format(s:IntegerToString(a:integer, 16), 4),
+               \ s:Format(s:IntegerToString(a:integer, 8), 3),
+               \ s:Format(s:IntegerToString(a:integer, 2), 8),
                \ )
 endfunction
 
-function! radical#RadicalView(string, count, ...) abort
-  call s:ShowBases(a:string, a:count, a:0 ? a:1 : '')
+function! s:ReplaceText(startcol, endcol, replacement) abort
+  call cursor(0, a:startcol)
+  normal! v
+  call cursor(0, a:endcol)
+  execute "normal! c\<C-R>='" . a:replacement . "'\<CR>"
+endfunction
+
+function! radical#NormalView(count) abort
+  if !s:CheckIsValidBase(a:count)
+    return
+  endif
+  let l:hit = s:FindNumberStringWithinLine(a:count, 0)
+  if empty(l:hit)
+    call maktaba#error#Warn('No number under cursor')
+    return
+  endif
+  let l:numberinfo = s:ParseNumber(l:hit.numberstring, a:count)
+  call s:PrintBaseInfo(l:numberinfo.integer, l:numberinfo.base)
+endfunction
+
+function! radical#VisualView(count, visualmode) abort
+  if !s:CheckIsValidBase(a:count)
+    return
+  endif
+  let l:selection = s:GetVisualSelection(a:visualmode)
+  let l:numberinfo = s:ParseNumber(l:selection, a:count)
+  if empty(l:numberinfo)
+    let l:message = 'Invalid number' .
+        \ (a:count is 0 ? '' : (' of base ' . a:count)) . ': "%s"'
+    call maktaba#error#Shout(l:message, l:selection)
+    return
+  endif
+  call s:PrintBaseInfo(l:numberinfo.integer, l:numberinfo.base)
+endfunction
+
+function! radical#CoerceToBase(to_base, count) abort
+  if !s:CheckIsValidBase(a:count)
+    return
+  endif
+  let l:hit = s:FindNumberStringWithinLine(a:count, 1)
+  if empty(l:hit)
+    return
+  endif
+  let l:numberinfo = s:ParseNumber(l:hit.numberstring, a:count)
+  let l:string = s:IntegerToString(l:numberinfo.integer, a:to_base, 1)
+  call s:ReplaceText(l:hit.startcol, l:hit.endcol, l:string)
 endfunction
