@@ -123,8 +123,8 @@ function! radical#NormalView(count) abort
   endif
   let l:hit = s:FindNumberStringWithinLine(a:count, 0)
   if empty(l:hit)
-    call maktaba#error#Warn('No number' .
-        \ (a:count is 0 ? '' : (' of base ' . a:count)) . ' under cursor')
+    echomsg 'No number' . (a:count is 0 ? '' : (' of base ' . a:count)) .
+        \ ' under cursor'
     return
   endif
   let l:numberinfo = s:ParseNumber(l:hit.numberstring, a:count)
