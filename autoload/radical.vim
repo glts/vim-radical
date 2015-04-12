@@ -1,18 +1,18 @@
 call maktaba#library#Require('magnum.vim')
 
 let s:BASES = {
-    \ 0:  {'searchpattern': '0x\x\+\|0o\=\o\+\|0b[01]\+\|\d\+'},
-    \ 2:  {'searchpattern': '\%(0b\)\=[01]\+',
-    \      'prefixpattern': '^0b',
+    \ 0:  {'searchpattern': '\v\c0x\x+|0o=\o+|0b[01]+|\d+'},
+    \ 2:  {'searchpattern': '\v\c%(0b)=[01]+',
+    \      'prefixpattern': '\v\c^0b',
     \      'format': '0b%s'},
-    \ 8:  {'searchpattern': '\%(0o\=\)\=\o\+',
-    \      'prefixpattern': '^0o\=',
+    \ 8:  {'searchpattern': '\v\c%(0o=)=\o+',
+    \      'prefixpattern': '\v\c^0o=',
     \      'format': '0%s'},
-    \ 10: {'searchpattern': '\d\+',
-    \      'prefixpattern': '^',
+    \ 10: {'searchpattern': '\v\d+',
+    \      'prefixpattern': '\v^',
     \      'format': '%s'},
-    \ 16: {'searchpattern': '\%(0x\)\=\x\+',
-    \      'prefixpattern': '^0x',
+    \ 16: {'searchpattern': '\v\c%(0x)=\x+',
+    \      'prefixpattern': '\v\c^0x',
     \      'format': '0x%s'}
     \ }
 
@@ -35,13 +35,13 @@ function! s:NumberStringToInteger(numberstring, base) abort
 endfunction
 
 function! s:GuessBase(numberstring) abort
-  if a:numberstring =~? '^0x\x\+$'
+  if a:numberstring =~? '\v^0x\x+$'
     return 16
-  elseif a:numberstring =~? '^0o\=\o\+$'
+  elseif a:numberstring =~? '\v^0o=\o+$'
     return 8
-  elseif a:numberstring =~? '^0b[01]\+$'
+  elseif a:numberstring =~? '\v^0b[01]+$'
     return 2
-  elseif a:numberstring =~? '^\d\+$'
+  elseif a:numberstring =~? '\v^\d+$'
     return 10
   endif
   throw maktaba#error#BadValue('Cannot guess base of "%s"', a:numberstring)
@@ -96,7 +96,7 @@ endfunction
 function! s:Format(string, width) abort
   let l:jut = strlen(a:string) % a:width
   let l:padding = repeat('0', l:jut is 0 ? 0 : (a:width - l:jut))
-  return join(split(l:padding . a:string, '.\{' . a:width . '}\zs'))
+  return join(split(l:padding . a:string, '\v.{' . a:width . '}\zs'))
 endfunction
 
 function! s:PrintBaseInfo(integer, base) abort
