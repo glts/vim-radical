@@ -30,8 +30,8 @@ function! s:IntegerToString(integer, base, ...) abort
 endfunction
 
 function! s:NumberStringToInteger(numberstring, base) abort
-  let l:rawstring = substitute(a:numberstring, s:BASES[a:base].prefixpattern, '', '')
-  return magnum#Int(l:rawstring, a:base)
+  let l:prefixpattern = s:BASES[a:base].prefixpattern
+  return magnum#Int(substitute(a:numberstring, l:prefixpattern, '', ''), a:base)
 endfunction
 
 function! s:GuessBase(numberstring) abort
@@ -44,7 +44,7 @@ function! s:GuessBase(numberstring) abort
   elseif a:numberstring =~? '^\d\+$'
     return 10
   endif
-  throw maktaba#error#BadValue('Cannot guess base of string "%s"', a:numberstring)
+  throw maktaba#error#BadValue('Cannot guess base of "%s"', a:numberstring)
 endfunction
 
 function! s:ParseNumber(numberstring, base) abort
@@ -95,19 +95,19 @@ endfunction
 
 function! s:Format(string, width) abort
   let l:jut = strlen(a:string) % a:width
-  let l:padded_string = repeat('0', l:jut is 0 ? 0 : (a:width - l:jut)) . a:string
-  return join(split(l:padded_string, '.\{' . a:width . '}\zs'))
+  let l:padding = repeat('0', l:jut is 0 ? 0 : (a:width - l:jut))
+  return join(split(l:padding . a:string, '.\{' . a:width . '}\zs'))
 endfunction
 
 function! s:PrintBaseInfo(integer, base) abort
   echomsg printf('<%s>%s  %s,  Hex %s,  Octal %s,  Binary %s',
-               \ s:IntegerToString(a:integer, a:base),
-               \ a:base is 10 ? '' : a:base,
-               \ s:IntegerToString(a:integer, 10),
-               \ s:Format(s:IntegerToString(a:integer, 16), 4),
-               \ s:Format(s:IntegerToString(a:integer, 8), 3),
-               \ s:Format(s:IntegerToString(a:integer, 2), 8),
-               \ )
+      \ s:IntegerToString(a:integer, a:base),
+      \ a:base is 10 ? '' : a:base,
+      \ s:IntegerToString(a:integer, 10),
+      \ s:Format(s:IntegerToString(a:integer, 16), 4),
+      \ s:Format(s:IntegerToString(a:integer, 8), 3),
+      \ s:Format(s:IntegerToString(a:integer, 2), 8),
+      \ )
 endfunction
 
 function! s:ReplaceText(startcol, endcol, replacement) abort
