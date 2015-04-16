@@ -1,10 +1,11 @@
 {
     "name": "radical.vim",
-    "description": "Show number under cursor in hex, octal, binary",
-    "author": "glts <676c7473@gmail.com>",
+    "description": "Convert decimal, hex, octal, binary number representations",
     "version": "0.0.0-SNAPSHOT",
+    "author": "glts <676c7473@gmail.com>",
+    "repository": {"type": "git", "url": "https://github.com/glts/vim-radical"},
     "dependencies": {
-        "maktaba": {},
-        "magnum.vim": {}
+        "maktaba": {"type": "git", "url": "https://github.com/google/vim-maktaba"},
+        "magnum.vim": {"type": "git", "url": "https://github.com/glts/vim-magnum"}
     }
 }
