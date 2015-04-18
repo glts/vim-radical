@@ -95,7 +95,7 @@ endfunction
 
 function! s:Format(string, width) abort
   let l:jut = strlen(a:string) % a:width
-  let l:padding = repeat('0', l:jut is 0 ? 0 : (a:width - l:jut))
+  let l:padding = l:jut is 0 ? '' : repeat('0', a:width - l:jut)
   return join(split(l:padding . a:string, '\v.{' . a:width . '}\zs'))
 endfunction
 
