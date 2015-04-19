@@ -1,18 +1,14 @@
 call maktaba#library#Require('magnum.vim')
 
 let s:BASES = {
-    \ 0:  {'searchpattern': '\v\c0x\x+|0o=\o+|0b[01]+|\d+'},
-    \ 2:  {'searchpattern': '\v\c%(0b)=[01]+',
-    \      'prefixpattern': '\v\c^0b',
+    \ 0:  {'pattern': '\v\c0x\x+|0o=\o+|0b[01]+|\d+'},
+    \ 2:  {'pattern': '\v\c%(0b)=([01]+)',
     \      'format': '0b%s'},
-    \ 8:  {'searchpattern': '\v\c%(0o=)=\o+',
-    \      'prefixpattern': '\v\c^0o=',
+    \ 8:  {'pattern': '\v\c%(0o=)=(\o+)',
     \      'format': '0%s'},
-    \ 10: {'searchpattern': '\v\d+',
-    \      'prefixpattern': '\v^',
+    \ 10: {'pattern': '\v(\d+)',
     \      'format': '%s'},
-    \ 16: {'searchpattern': '\v\c%(0x)=\x+',
-    \      'prefixpattern': '\v\c^0x',
+    \ 16: {'pattern': '\v\c%(0x)=(\x+)',
     \      'format': '0x%s'}
     \ }
 
@@ -30,8 +26,8 @@ function! s:IntegerToString(integer, base, ...) abort
 endfunction
 
 function! s:NumberStringToInteger(numberstring, base) abort
-  let l:prefixpattern = s:BASES[a:base].prefixpattern
-  return magnum#Int(substitute(a:numberstring, l:prefixpattern, '', ''), a:base)
+  let l:pattern = s:BASES[a:base].pattern
+  return magnum#Int(substitute(a:numberstring, l:pattern, '\1', ''), a:base)
 endfunction
 
 function! s:GuessBase(numberstring) abort
@@ -58,7 +54,7 @@ function! s:ParseNumber(numberstring, base) abort
 endfunction
 
 function! s:FindNumberStringWithinLine(base_or_zero, rightwards) abort
-  let l:pattern = s:BASES[a:base_or_zero].searchpattern
+  let l:pattern = s:BASES[a:base_or_zero].pattern
   let l:cursor_save = getpos('.')[1:2]
   try
     let l:end = searchpos(l:pattern, 'ce', line('.'))
