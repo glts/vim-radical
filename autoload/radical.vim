@@ -1,5 +1,8 @@
 call maktaba#library#Require('magnum.vim')
 
+" Regexps and formats for the bases 2, 8, 10, and 16. The 'pattern' of each base
+" has one pair of brackets to capture the significant part of the number. The
+" key 0 is a special value used for searching for a number of any base.
 let s:BASES = {
     \ 0:  {'pattern': '\v\c0x\x+|0o=\o+|0b[01]+|\d+'},
     \ 2:  {'pattern': '\v\c%(0b)=([01]+)',
@@ -113,6 +116,9 @@ function! s:ReplaceText(startcol, endcol, replacement) abort
   execute "normal! c\<C-R>='" . a:replacement . "'\<CR>"
 endfunction
 
+" Prints base info for the number under the cursor. When {count} is one of 2, 8,
+" 10, 16, then it is the base to use to interpret the number under the cursor;
+" when {count} is 0 the base is guessed.
 function! radical#NormalView(count) abort
   if !s:CheckIsValidBase(a:count)
     return
@@ -127,6 +133,9 @@ function! radical#NormalView(count) abort
   call s:PrintBaseInfo(l:number.integer, l:number.base)
 endfunction
 
+" Prints base info for the number selected in Visual mode. When {count} is one
+" of 2, 8, 10, 16, then it is the base of the selected number; when {count} is 0
+" the base is guessed. To be called in Visual mode with a visualmode() argument.
 function! radical#VisualView(count, visualmode) abort
   if !s:CheckIsValidBase(a:count)
     return
@@ -141,6 +150,9 @@ function! radical#VisualView(count, visualmode) abort
   call s:PrintBaseInfo(l:number.integer, l:number.base)
 endfunction
 
+" Searches for a number under or to the right of the cursor and replaces it with
+" its base {to_base} representation. When {count} is one of 2, 8, 10, 16, then
+" it is the base representation to search for; when {count} is 0 any base will do.
 function! radical#CoerceToBase(to_base, count) abort
   if !s:CheckIsValidBase(a:count)
     return
