@@ -123,12 +123,12 @@ function! radical#NormalView(count) abort
   endif
   let l:hit = s:FindNumberStringWithinLine(a:count, 0)
   if empty(l:hit)
-    echomsg 'No number' . (a:count is 0 ? '' : (' of base ' . a:count)) .
-        \ ' under cursor'
+    let l:qualifier = a:count is 0 ? '' : (' of base ' . a:count)
+    echomsg printf('No number%s under cursor', l:qualifier)
     return
   endif
-  let l:numberinfo = s:ParseNumber(l:hit.numberstring, a:count)
-  call s:PrintBaseInfo(l:numberinfo.integer, l:numberinfo.base)
+  let l:number = s:ParseNumber(l:hit.numberstring, a:count)
+  call s:PrintBaseInfo(l:number.integer, l:number.base)
 endfunction
 
 function! radical#VisualView(count, visualmode) abort
@@ -136,14 +136,13 @@ function! radical#VisualView(count, visualmode) abort
     return
   endif
   let l:selection = s:GetVisualSelection(a:visualmode)
-  let l:numberinfo = s:ParseNumber(l:selection, a:count)
-  if empty(l:numberinfo)
-    let l:message = 'Invalid number' .
-        \ (a:count is 0 ? '' : (' of base ' . a:count)) . ': "%s"'
-    call maktaba#error#Shout(l:message, l:selection)
+  let l:number = s:ParseNumber(l:selection, a:count)
+  if empty(l:number)
+    let l:qualifier = a:count is 0 ? '' : (' of base ' . a:count)
+    call maktaba#error#Shout('Invalid number%s: "%s"', l:qualifier, l:selection)
     return
   endif
-  call s:PrintBaseInfo(l:numberinfo.integer, l:numberinfo.base)
+  call s:PrintBaseInfo(l:number.integer, l:number.base)
 endfunction
 
 function! radical#CoerceToBase(to_base, count) abort
@@ -154,7 +153,7 @@ function! radical#CoerceToBase(to_base, count) abort
   if empty(l:hit)
     return
   endif
-  let l:numberinfo = s:ParseNumber(l:hit.numberstring, a:count)
-  let l:string = s:IntegerToString(l:numberinfo.integer, a:to_base, 1)
+  let l:number = s:ParseNumber(l:hit.numberstring, a:count)
+  let l:string = s:IntegerToString(l:number.integer, a:to_base, 1)
   call s:ReplaceText(l:hit.startcol, l:hit.endcol, l:string)
 endfunction
