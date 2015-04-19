@@ -43,9 +43,9 @@ function! s:GuessBase(numberstring) abort
   throw maktaba#error#BadValue('Cannot guess base of "%s"', a:numberstring)
 endfunction
 
-function! s:ParseNumber(numberstring, base) abort
+function! s:ParseNumber(numberstring, base_or_zero) abort
   try
-    let l:base = a:base is 0 ? s:GuessBase(a:numberstring) : a:base
+    let l:base = a:base_or_zero is 0 ? s:GuessBase(a:numberstring) : a:base_or_zero
     let l:integer = s:NumberStringToInteger(a:numberstring, l:base)
     return {'integer': l:integer, 'base': l:base}
   catch /ERROR(BadValue)/
