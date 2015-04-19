@@ -20,14 +20,14 @@ function! s:CheckIsValidBase(number) abort
   return 1
 endfunction
 
-function! s:IntegerToString(integer, base, ...) abort
-  let l:format = a:0 ? s:BASES[a:base].format : '%s'
-  return printf(l:format, a:integer.String(a:base))
-endfunction
-
 function! s:NumberStringToInteger(numberstring, base) abort
   let l:pattern = s:BASES[a:base].pattern
   return magnum#Int(substitute(a:numberstring, l:pattern, '\1', ''), a:base)
+endfunction
+
+function! s:IntegerToString(integer, base, ...) abort
+  let l:format = a:0 ? s:BASES[a:base].format : '%s'
+  return printf(l:format, a:integer.String(a:base))
 endfunction
 
 function! s:GuessBase(numberstring) abort
