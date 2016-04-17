@@ -3,8 +3,8 @@ if !s:enter
   finish
 endif
 
-nmap <unique> g<C-A> <Plug>RadicalView
-xmap <unique> g<C-A> <Plug>RadicalView
+nmap <unique> gA <Plug>RadicalView
+xmap <unique> gA <Plug>RadicalView
 
 nmap <unique> crd <Plug>RadicalCoerceToDecimal
 nmap <unique> crx <Plug>RadicalCoerceToHex

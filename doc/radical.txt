@@ -19,8 +19,8 @@ Prints the base representations of the number under the cursor or the number
 selected in Visual mode.  Defined in normal and Visual mode.
 
 Default key mappings: >
-    nmap g<C-A> <Plug>RadicalView
-    xmap g<C-A> <Plug>RadicalView
+    nmap gA <Plug>RadicalView
+    xmap gA <Plug>RadicalView
 <
 						*<Plug>RadicalCoerceToDecimal*
 						*<Plug>RadicalCoerceToHex*
@@ -36,6 +36,6 @@ Default key mappings: >
     nmap crb <Plug>RadicalCoerceToBinary
 
 For all mappings the base of the target number can be forced by giving a
-count, for example "16g<C-A>".
+count.  For example, "16gA" targets a hexadecimal number.
 
  vim:tw=78:ts=8:ft=help:norl:

@@ -16,8 +16,7 @@ Usage
 
 The entire functionality of this plugin can be summarised in two items.
 
-*   `g CTRL-A` shows the four representations of the number under the
-    cursor.
+*   `gA` shows the four representations of the number under the cursor.
 *   `crd`, `crx`, `cro`, `crb` convert the number under the cursor to
     decimal, hex, octal, binary, respectively.
 
