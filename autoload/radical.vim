@@ -1,5 +1,3 @@
-call maktaba#library#Require('magnum.vim')
-
 " Regexps and formats for the bases 2, 8, 10, and 16. The 'pattern' of each base
 " has one pair of brackets to capture the significant part of the number. The
 " key 0 is a special value used for searching for a number of any base.
@@ -15,9 +13,15 @@ let s:BASES = {
     \      'format': '0x%s'}
     \ }
 
+function! s:Error(message) abort
+  echohl ErrorMsg
+  echomsg a:message
+  echohl None
+endfunction
+
 function! s:CheckIsValidBase(number) abort
-  if !maktaba#value#IsIn(a:number, [0, 2, 8, 10, 16])
-    call maktaba#error#Shout('Base %s not supported', a:number)
+  if index([0, 2, 8, 10, 16], a:number) < 0
+    call s:Error('Base ' . a:number . ' not supported')
     return 0
   endif
   return 1
@@ -43,7 +47,7 @@ function! s:GuessBase(numberstring) abort
   elseif a:numberstring =~? '\v^\d+$'
     return 10
   endif
-  throw maktaba#error#BadValue('Cannot guess base of "%s"', a:numberstring)
+  throw 'radical: Cannot guess base of "' . a:numberstring . '"'
 endfunction
 
 function! s:ParseNumber(numberstring, base_or_zero) abort
@@ -51,7 +55,8 @@ function! s:ParseNumber(numberstring, base_or_zero) abort
     let l:base = a:base_or_zero is 0 ? s:GuessBase(a:numberstring) : a:base_or_zero
     let l:integer = s:NumberStringToInteger(a:numberstring, l:base)
     return {'integer': l:integer, 'base': l:base}
-  catch /ERROR(BadValue)/
+  " TODO(glts) Adapt pattern if magnum.vim ever drops dependency on maktaba.
+  catch /\v^(radical|ERROR\(BadValue\)):/
     return {}
   endtry
 endfunction
@@ -144,7 +149,7 @@ function! radical#VisualView(count, visualmode) abort
   let l:number = s:ParseNumber(l:selection, a:count)
   if empty(l:number)
     let l:qualifier = a:count is 0 ? '' : (' of base ' . a:count)
-    call maktaba#error#Shout('Invalid number%s: "%s"', l:qualifier, l:selection)
+    call s:Error('Invalid number' . l:qualifier . ': "' . l:selection . '"')
     return
   endif
   call s:PrintBaseInfo(l:number.integer, l:number.base)

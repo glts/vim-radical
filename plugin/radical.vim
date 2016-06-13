@@ -1,22 +1,30 @@
-let [s:plugin, s:enter] = maktaba#plugin#Enter(expand('<sfile>:p'))
-if !s:enter
+if exists('g:loaded_radical') || &compatible
   finish
 endif
+let g:loaded_radical = 1
 
-nnoremap <unique> <silent> <Plug>RadicalView
+nnoremap <silent> <Plug>RadicalView
     \ :<C-U>call radical#NormalView(v:count)<CR>
-xnoremap <unique> <silent> <Plug>RadicalView
+xnoremap <silent> <Plug>RadicalView
     \ :<C-U>call radical#VisualView(v:count, visualmode())<CR>
 
-nnoremap <unique> <silent> <Plug>RadicalCoerceToDecimal
+nnoremap <silent> <Plug>RadicalCoerceToDecimal
     \ :<C-U>call radical#CoerceToBase(10, v:count) <Bar>
     \ silent! call repeat#set("\<Plug>RadicalCoerceToDecimal")<CR>
-nnoremap <unique> <silent> <Plug>RadicalCoerceToHex
+nnoremap <silent> <Plug>RadicalCoerceToHex
     \ :<C-U>call radical#CoerceToBase(16, v:count) <Bar>
     \ silent! call repeat#set("\<Plug>RadicalCoerceToHex")<CR>
-nnoremap <unique> <silent> <Plug>RadicalCoerceToOctal
+nnoremap <silent> <Plug>RadicalCoerceToOctal
     \ :<C-U>call radical#CoerceToBase(8, v:count) <Bar>
     \ silent! call repeat#set("\<Plug>RadicalCoerceToOctal")<CR>
-nnoremap <unique> <silent> <Plug>RadicalCoerceToBinary
+nnoremap <silent> <Plug>RadicalCoerceToBinary
     \ :<C-U>call radical#CoerceToBase(2, v:count) <Bar>
     \ silent! call repeat#set("\<Plug>RadicalCoerceToBinary")<CR>
+
+nmap gA <Plug>RadicalView
+xmap gA <Plug>RadicalView
+
+nmap crd <Plug>RadicalCoerceToDecimal
+nmap crx <Plug>RadicalCoerceToHex
+nmap cro <Plug>RadicalCoerceToOctal
+nmap crb <Plug>RadicalCoerceToBinary

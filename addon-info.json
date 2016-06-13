@@ -5,7 +5,6 @@
     "author": "glts <676c7473@gmail.com>",
     "repository": {"type": "git", "url": "https://github.com/glts/vim-radical"},
     "dependencies": {
-        "maktaba": {"type": "git", "url": "https://github.com/google/vim-maktaba"},
         "magnum.vim": {"type": "git", "url": "https://github.com/glts/vim-magnum"}
     }
 }

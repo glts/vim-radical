@@ -11,7 +11,6 @@ bases, that is in decimal, hexadecimal, octal, and binary representations.
 Provided are mappings of two kinds: a mapping to view the number under the
 cursor in different bases, and mappings to convert the number to some base.
 
-This plugin depends on the |maktaba| library.
 This plugin depends on the |magnum| library.
 
 						*<Plug>RadicalView*
