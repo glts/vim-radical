@@ -155,6 +155,11 @@ function! radical#VisualView(count, visualmode) abort
   call s:PrintBaseInfo(l:number.integer, l:number.base)
 endfunction
 
+function! s:PlugMapping(base) abort
+  let l:name = {10: 'Decimal', 16: 'Hex', 8: 'Octal', 2: 'Binary'}
+  return "\<Plug>RadicalCoerceTo" . l:name[a:base]
+endfunction
+
 " Searches for a number under or to the right of the cursor and replaces it with
 " its base {to_base} representation. When {count} is one of 2, 8, 10, 16, then
 " it is the base representation to search for; when {count} is 0 any base will do.
@@ -169,4 +174,6 @@ function! radical#CoerceToBase(to_base, count) abort
   let l:number = s:ParseNumber(l:hit.numberstring, a:count)
   let l:string = s:IntegerToString(l:number.integer, a:to_base, 1)
   call s:ReplaceText(l:hit.startcol, l:hit.endcol, l:string)
+
+  silent! call repeat#set(s:PlugMapping(a:to_base), a:count)
 endfunction
