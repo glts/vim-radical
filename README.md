@@ -43,6 +43,7 @@ for you.
 
 For example, with [pathogen.vim][4] the installation goes:
 
+    git clone https://github.com/google/vim-maktaba.git ~/.vim/bundle/maktaba
     git clone https://github.com/glts/vim-magnum.git ~/.vim/bundle/magnum
     git clone https://github.com/glts/vim-radical.git ~/.vim/bundle/radical
 
