@@ -55,8 +55,7 @@ function! s:ParseNumber(numberstring, base_or_zero) abort
     let l:base = a:base_or_zero is 0 ? s:GuessBase(a:numberstring) : a:base_or_zero
     let l:integer = s:NumberStringToInteger(a:numberstring, l:base)
     return {'integer': l:integer, 'base': l:base}
-  " TODO(glts) Adapt pattern if magnum.vim ever drops dependency on maktaba.
-  catch /\v^(radical|ERROR\(BadValue\)):/
+  catch /\v^(radical|magnum):/
     return {}
   endtry
 endfunction
