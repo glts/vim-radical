@@ -15,7 +15,7 @@ This plugin depends on the |magnum| library.
 
 						*<Plug>RadicalView*
 Prints the base representations of the number under the cursor or the number
-selected in Visual mode.  Defined in normal and Visual mode.
+selected in Visual mode.  Defined in Normal and Visual mode.
 
 Default key mappings: >
     nmap gA <Plug>RadicalView
