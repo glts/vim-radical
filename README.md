@@ -18,7 +18,8 @@ The entire functionality of this plugin can be summarised in two items.
 *   `crd`, `crx`, `cro`, `crb` convert the number under the cursor to
     decimal, hex, octal, binary, respectively.
 
-These are the default mappings.
+These mappings accept a count to force the base used to interpret the
+targeted number.
 
 Requirements
 ------------
