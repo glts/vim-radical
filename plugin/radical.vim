@@ -11,10 +11,10 @@ nnoremap <silent> <Plug>RadicalCoerceToOctal :<C-U>call radical#CoerceToBase(8, 
 nnoremap <silent> <Plug>RadicalCoerceToBinary :<C-U>call radical#CoerceToBase(2, v:count)<CR>
 
 if !exists('g:radical_no_mappings') || !g:radical_no_mappings
-    nmap gA <Plug>RadicalView
-    xmap gA <Plug>RadicalView
-    nmap crd <Plug>RadicalCoerceToDecimal
-    nmap crx <Plug>RadicalCoerceToHex
-    nmap cro <Plug>RadicalCoerceToOctal
-    nmap crb <Plug>RadicalCoerceToBinary
+  nmap gA <Plug>RadicalView
+  xmap gA <Plug>RadicalView
+  nmap crd <Plug>RadicalCoerceToDecimal
+  nmap crx <Plug>RadicalCoerceToHex
+  nmap cro <Plug>RadicalCoerceToOctal
+  nmap crb <Plug>RadicalCoerceToBinary
 endif

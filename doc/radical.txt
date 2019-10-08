@@ -1,6 +1,6 @@
 *radical.txt*	Convert decimal, hex, octal, binary number representations
 
-Author: glts <676c7473@gmail.com>
+Author: David Bürgin <dbuergin@gluet.ch>
 License: Same terms as Vim itself (see |license|)
 
 DESCRIPTION					*radical*
@@ -36,5 +36,8 @@ Default key mappings: >
 
 For all mappings the base of the target number can be forced by giving a
 count.  For example, "16gA" targets a hexadecimal number.
+
+All default mappings can be suppressed by setting "g:radical_no_mappings" in
+|vimrc|.
 
  vim:tw=78:ts=8:ft=help:norl:

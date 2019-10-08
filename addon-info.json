@@ -2,7 +2,7 @@
     "name": "radical.vim",
     "description": "Convert decimal, hex, octal, binary number representations",
     "version": "1.0.1",
-    "author": "glts <676c7473@gmail.com>",
+    "author": "David Bürgin <dbuergin@gluet.ch>",
     "repository": {"type": "git", "url": "https://github.com/glts/vim-radical"},
     "dependencies": {
         "magnum.vim": {"type": "git", "url": "https://github.com/glts/vim-magnum"}
