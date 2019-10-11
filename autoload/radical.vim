@@ -114,10 +114,20 @@ function! s:PrintBaseInfo(integer, base) abort
 endfunction
 
 function! s:ReplaceText(startcol, endcol, replacement) abort
-  call cursor(0, a:startcol)
-  normal! v
-  call cursor(0, a:endcol)
-  execute "normal! c\<C-R>='" . a:replacement . "'\<CR>"
+  let l:clipboard_save = &clipboard
+  try
+    set clipboard=
+    let l:reg_save = @@
+    let l:expr_reg_save = @=
+    call cursor(0, a:startcol)
+    normal! v
+    call cursor(0, a:endcol)
+    execute "normal! c\<C-R>='" . a:replacement . "'\<CR>"
+    let @= = l:expr_reg_save
+    let @@ = l:reg_save
+  finally
+    let &clipboard = l:clipboard_save
+  endtry
 endfunction
 
 " Prints base info for the number under the cursor. When {count} is one of 2, 8,
