@@ -32,8 +32,19 @@ function! s:NumberStringToInteger(numberstring, base) abort
   return magnum#Int(substitute(a:numberstring, l:pattern, '\1', ''), a:base)
 endfunction
 
+function! s:BasesForBuffer() abort
+  if !has_key(b:, 'radical_bases')
+    return s:BASES
+  endif
+  let l:bases = deepcopy(s:BASES)
+  for [l:base, l:settings] in items(b:radical_bases)
+    call extend(l:bases[l:base], l:settings)
+  endfor
+  return l:bases
+endfunction
+
 function! s:IntegerToString(integer, base, ...) abort
-  let l:format = a:0 ? s:BASES[a:base].format : '%s'
+  let l:format = a:0 ? (s:BasesForBuffer()[a:base].format) : '%s'
   return printf(l:format, a:integer.String(a:base))
 endfunction
 
