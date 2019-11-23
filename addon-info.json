@@ -1,7 +1,7 @@
 {
     "name": "radical.vim",
     "description": "Convert decimal, hex, octal, binary number representations",
-    "version": "1.1.0",
+    "version": "1.2.0",
     "author": "David Bürgin <dbuergin@gluet.ch>",
     "repository": {"type": "git", "url": "https://github.com/glts/vim-radical"},
     "dependencies": {

@@ -38,7 +38,7 @@ For all mappings the base of the target number can be forced by giving a
 count.  For example, "16gA" targets a hexadecimal number.
 
 Coercion output can be controlled by specifying a format string for each base
-in the buffer-local Dictionary "b:radical_bases". It should look like this: >
+in the buffer-local Dictionary "b:radical_bases".  It should look like this: >
     {8: {'format': '0o%s'}}
 
 All default mappings can be suppressed by setting "g:radical_no_mappings" in
