@@ -10,7 +10,8 @@ let s:BASES = {
     \ 10: {'pattern': '\v(\d+)',
     \      'format': '%s'},
     \ 16: {'pattern': '\v\c%(0x)=(\x+)',
-    \      'format': '0x%s'}
+    \      'format': '0x%s',
+    \      'uppercase': 0 }
     \ }
 
 function! s:Error(message) abort
@@ -52,7 +53,13 @@ endfunction
 
 function! s:IntegerToString(integer, base, ...) abort
   let l:format = a:0 ? (s:BasesForBuffer()[a:base].format) : '%s'
-  return printf(l:format, a:integer.String(a:base))
+  let l:str = a:integer.String(a:base)
+
+  if get(s:BasesForBuffer()[a:base], 'uppercase', v:false)
+    let l:str = l:str->toupper()
+  endif
+
+  return printf(l:format, l:str)
 endfunction
 
 function! s:GuessBase(numberstring) abort
