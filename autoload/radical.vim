@@ -33,13 +33,20 @@ function! s:NumberStringToInteger(numberstring, base) abort
 endfunction
 
 function! s:BasesForBuffer() abort
-  if !has_key(b:, 'radical_bases')
-    return s:BASES
-  endif
   let l:bases = deepcopy(s:BASES)
-  for [l:base, l:settings] in items(b:radical_bases)
-    call extend(l:bases[l:base], l:settings)
-  endfor
+
+  if has_key(g:, 'radical_bases')
+    for [l:base, l:settings] in items(g:radical_bases)
+      call extend(l:bases[l:base], l:settings)
+    endfor
+  endif
+
+  if has_key(b:, 'radical_bases')
+    for [l:base, l:settings] in items(b:radical_bases)
+      call extend(l:bases[l:base], l:settings)
+    endfor
+  endif
+
   return l:bases
 endfunction
 
