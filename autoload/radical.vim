@@ -71,7 +71,7 @@ function! s:IntegerToString(integer, base, ...) abort
         let l:expbit = 8
         let l:extrabit = a:base ==# 16 ? 16 : 8
         while l:expbit < l:bit
-          if l:expbit < v:numbersize
+          if l:expbit < get(v:, 'numbersize', 64)
             let l:expbit = l:expbit * 2
           else
             let l:expbit = l:expbit + l:extrabit
