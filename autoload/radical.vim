@@ -117,7 +117,7 @@ function! s:PrintBaseInfo(integer, base) abort
   echomsg printf('<%s>%s  %s,  Hex %s,  Octal %s,  Binary %s',
       \ s:IntegerToString(a:integer, a:base),
       \ a:base is 10 ? '' : a:base,
-      \ s:IntegerToString(a:integer, 10),
+      \ substitute(s:IntegerToString(a:integer, 10), '\d\zs\ze\v(\d{3})+$', ' ', 'g'),
       \ s:Format(s:IntegerToString(a:integer, 16), 4),
       \ s:Format(s:IntegerToString(a:integer, 8), 3),
       \ s:Format(s:IntegerToString(a:integer, 2), 8),
