@@ -4,13 +4,17 @@
 let s:BASES = {
     \ 0:  {'pattern': '\v\c0x\x+|0o=\o+|0b[01]+|\d+'},
     \ 2:  {'pattern': '\v\c%(0b)=([01]+)',
-    \      'format': '0b%s'},
+    \      'format': '0b%s',
+    \      'padding' : 0 },
     \ 8:  {'pattern': '\v\c%(0o=)=(\o+)',
-    \      'format': '0%s'},
+    \      'format': '0%s',
+    \      'padding' : 0 },
     \ 10: {'pattern': '\v(\d+)',
     \      'format': '%s'},
     \ 16: {'pattern': '\v\c%(0x)=(\x+)',
-    \      'format': '0x%s'}
+    \      'format': '0x%s',
+    \      'uppercase': 0,
+    \      'padding' : 0 }
     \ }
 
 function! s:Error(message) abort
@@ -33,19 +37,55 @@ function! s:NumberStringToInteger(numberstring, base) abort
 endfunction
 
 function! s:BasesForBuffer() abort
-  if !has_key(b:, 'radical_bases')
-    return s:BASES
-  endif
   let l:bases = deepcopy(s:BASES)
-  for [l:base, l:settings] in items(b:radical_bases)
-    call extend(l:bases[l:base], l:settings)
-  endfor
+
+  if has_key(g:, 'radical_bases')
+    for [l:base, l:settings] in items(g:radical_bases)
+      call extend(l:bases[l:base], l:settings)
+    endfor
+  endif
+
+  if has_key(b:, 'radical_bases')
+    for [l:base, l:settings] in items(b:radical_bases)
+      call extend(l:bases[l:base], l:settings)
+    endfor
+  endif
+
   return l:bases
 endfunction
 
 function! s:IntegerToString(integer, base, ...) abort
   let l:format = a:0 ? (s:BasesForBuffer()[a:base].format) : '%s'
-  return printf(l:format, a:integer.String(a:base))
+  let l:str = a:integer.String(a:base)
+
+  if get(s:BasesForBuffer()[a:base], 'uppercase', v:false)
+    let l:str = l:str->toupper()
+  endif
+
+  if get(s:BasesForBuffer()[a:base], 'padding', v:false)
+    let l:charbit = a:base ==# 16 ? 4 : a:base ==# 8 ? 3 : a:base ==# 2 ? 1 : 0
+    if l:charbit !=# 0
+      let l:bit = len(l:str) * l:charbit
+      let l:expbit = 0
+      if a:base ==# 16 || a:base ==# 2
+        let l:expbit = 8
+        let l:extrabit = a:base ==# 16 ? 16 : 8
+        while l:expbit < l:bit
+          if l:expbit < get(v:, 'numbersize', 64)
+            let l:expbit = l:expbit * 2
+          else
+            let l:expbit = l:expbit + l:extrabit
+          endif
+        endwhile
+      elseif a:base ==# 8
+        let l:modbit = l:bit % (3 * l:charbit)
+        let l:expbit = l:bit + (l:modbit ==# 0 ? 0 : (3 * l:charbit - l:modbit))
+      endif
+      let l:str = printf('%0' . (l:expbit / l:charbit) . 's', l:str)
+    endif
+  endif
+
+  return printf(l:format, l:str)
 endfunction
 
 function! s:GuessBase(numberstring) abort
