@@ -150,7 +150,7 @@ function! s:Format(string, width) abort
 endfunction
 
 function! s:PrintBaseInfo(integer, base) abort
-  echomsg printf('<%s>%s  %s,  Hex %s,  Octal %s,  Binary %s',
+  echomsg printf('<%s>%s  %s,  Hex %s,  Oct %s,  Bin %s',
       \ s:IntegerToString(a:integer, a:base),
       \ a:base is 10 ? '' : a:base,
       \ s:IntegerToString(a:integer, 10),
