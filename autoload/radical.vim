@@ -4,17 +4,13 @@
 let s:BASES = {
     \ 0:  {'pattern': '\v\c0x\x+|0o=\o+|0b[01]+|\d+'},
     \ 2:  {'pattern': '\v\c%(0b)=([01]+)',
-    \      'format': '0b%s',
-    \      'padding' : 0 },
+    \      'format': '0b%s'},
     \ 8:  {'pattern': '\v\c%(0o=)=(\o+)',
-    \      'format': '0%s',
-    \      'padding' : 0 },
+    \      'format': '0%s'},
     \ 10: {'pattern': '\v(\d+)',
     \      'format': '%s'},
     \ 16: {'pattern': '\v\c%(0x)=(\x+)',
-    \      'format': '0x%s',
-    \      'uppercase': 0,
-    \      'padding' : 0 }
+    \      'format': '0x%s'}
     \ }
 
 function! s:Error(message) abort
